@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPX → 一生足迹</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="converter.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><span class="tag">本地轨迹工具</span><h1>让走过的路，留在一生足迹。</h1><p>将 GPX 转为一生足迹 CSV。文件在浏览器本地处理，无需上传。</p></header>
+    <div class="layout">
+      <section class="card">
+        <h2><span>01</span> 导入轨迹</h2>
+        <label class="upload" for="gpx"><strong>选择 GPX 文件</strong><span id="file-name">支持奥维等软件导出的 .gpx 文件</span><input id="gpx" type="file" accept=".gpx,application/gpx+xml"></label>
+        <h2><span>02</span> 设置导出</h2>
+        <form id="settings">
+          <label for="start">开始时间 <small>北京时间 UTC+8</small></label>
+          <input id="start" type="datetime-local" step="1" required>
+          <label for="end">结束时间 <small>北京时间 UTC+8</small></label>
+          <input id="end" type="datetime-local" step="1" required>
+          <label for="interval">采样间隔（秒）</label>
+          <input id="interval" type="number" min="1" step="1" placeholder="选择 GPX 后自动计算" required>
+          <p class="hint">修改起止时间自动计算间隔（可为小数）；手动修改仅接受正整数秒，并自动更新结束时间。保留所有点，替换原 GPX 时间；导出时间取整到秒。</p>
+          <label for="output">导出名称</label>
+          <div class="filename"><input id="output" type="text" value="一生足迹轨迹" maxlength="120" required><span>.csv</span></div>
+          <button id="export" type="submit" formnovalidate disabled>导出一生足迹 CSV <span>↓</span></button>
+        </form>
+        <p id="status" role="status" aria-live="polite">请选择一份 GPX 文件开始。</p>
+      </section>
+      <aside class="card preview">
+        <h2><span>03</span> 轨迹预览</h2>
+        <div class="map"><svg id="route" viewBox="0 0 600 300" role="img" aria-label="轨迹形状预览"></svg><p id="empty">导入后在这里预览轨迹形状</p><span class="map-note">形状预览 · 无地图底图</span></div>
+        <div class="stats"><div><span>轨迹点</span><strong id="points">—</strong></div><div><span>平均速度 · km/h</span><strong id="speed">—</strong><p class="hint">总里程 ÷ 总时长</p></div><div><span>计算里程</span><strong id="distance">—</strong></div><div><span>预计时长</span><strong id="duration">—</strong></div></div>
+        <div class="time-summary"><span>开始 <b id="start-view">—</b></span><span>结束 <b id="end-view">—</b></span></div>
+        <p id="details" class="hint"></p>
+        <details><summary>转换规则</summary><ul><li>保留轨迹点顺序与原始经纬度，不插点、不转换坐标。</li><li>distance 为分段内相邻点距离（米），每段首点为 0。</li><li>speed 固定为 10，不计算速度；App 显示值可能自行计算。</li><li>accuracy 固定为 10；保留 GPX 海拔，缺失时填 0。</li><li>输出 11 列 UTF-8 BOM CSV。生成时间为模拟时间。</li><li>多段轨迹放入同一 CSV，App 仍可能把分段连接显示。</li></ul></details>
+      </aside>
+    </div>
+    <footer>仅修改导出的副本 · 原始 GPX 文件保持不变</footer>
+  </main>
+</body>
+</html>
